@@ -19,6 +19,6 @@ $2b$16$ZiY1yscail4V72CYP1IK3uaC3owprKpLftbHCutDvCVxKSlYVe6qW
  module.exports = {
     clientID: '<yourClientId>',
     clientSecret: '<yourClientSecret>',
-    callbackURL: 'http(s)://<yourDomain>:<yourPort>/auth/github/callback'
+    callbackURL: 'https://<yourDomain>[:<yourPort>]/auth/github/callback'
 };
  ```
