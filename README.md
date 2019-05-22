@@ -2,10 +2,10 @@
 
 Just an example of express+passport. 
 
-All the session information is stored in a __JWT__ on the client side (__sessionless passport__). In order to minimize the code, as the client is a browser, we will use __cookies__ for token storage (on the client) and exchange (between client and server). JWT and cookies configuration options are stored in `config/tokenNCookies`. Please not that the server secret for 'signing' (HMACing) the token is stored in that file, so be careful if you are syncing your code in a public/private repository.
+All the session information is stored in a __JWT__ on the client side (__sessionless passport__). In order to minimize the code, as the client is a browser, we will use __cookies__ for token storage (on the client) and exchange (between client and server). JWT and cookies configuration options are stored in `config/tokenNCookies`. Please note that the server's secret for 'signing' (HMACing) the token is stored in that file, so be careful if you are syncing it with an online repository.
 
 User login can be performed with two strategies:
- 1. __Standard username/password__. The server stores bcrypt-ed passwords that are checked against the user-provided one. For the sake of simplicity, no DB is used and two users are hardcoded in `config/users.js`. You can create new bcrypt-ed passwords using the provided `tools/bcrypt.js` script. Salt value is randomly chosen and the number of rounds defaults to `13` but can be set to any value as a second argument; e.g. for password `hello123`:
+ 1. __Standard username/password__. The server stores bcrypt-ed passwords that are checked against the user-provided one. For the sake of simplicity, no DB is used and two example users are hardcoded in `config/users.js`. You can create new bcrypt-ed passwords using the provided `tools/bcrypt.js` script. Salt value is randomly chosen and the number of rounds defaults to `13` but can be set to any value as a second argument; e.g. for password `hello123`:
  ```bash
 $ node bcrypt.js hello123
 $2b$13$x2B9adECo7EkKuDbujJe1unW3icISCctreasFOJFiLyyWUdDOO9zu
