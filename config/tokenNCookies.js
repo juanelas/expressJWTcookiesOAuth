@@ -1,10 +1,10 @@
 module.exports = {
     jwtSecret : 'myServerSecret',
-    jwtIss : 'https://localhost',
-    jwtAud : 'https://localhost',
+    jwtIss : 'https://localhost:8443',
+    jwtAud : 'https://localhost:8443',
     cookieOptions : {
         httpOnly: true,
-        secure: false,
+        secure: true,
         sameSite: true
     }
 };

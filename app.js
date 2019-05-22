@@ -3,7 +3,6 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-const http = require('http');
 
 const passport = require('./config/passport');
 
@@ -20,14 +19,22 @@ const routes = require('./routes/index');
 app.use('/', routes);
 
 /**
- * Create HTTP server.
+ * Create HTTPs server.
  */
-var server = http.createServer(app);
+const https = require('https');
+const fs = require('fs');
+
+const tlsConfig = require('./config/tls/config');
+const credentials = {
+    key: fs.readFileSync(tlsConfig.privateKey),
+    cert: fs.readFileSync(tlsConfig.certificate)
+};
+var server = https.createServer(credentials, app);
 
 /**
  * Listen on provided port, on all network interfaces.
  */
-server.listen(3000);
+server.listen(8443);
 server.on('listening', onListening);
 
 /**

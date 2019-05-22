@@ -1,4 +1,5 @@
 config/IdP/*
+config/tls/*.pem
 
 # Logs
 logs

@@ -1,6 +1,8 @@
 # expressJWTcookiesOAuth
 
-Just an example of express+passport. 
+Just a simple example of https+express+passport, merely with an academic purpose.
+
+In order to configure the HTTPs server, you need a certificate and a private key in PEM format. Where to find those files is configured in `config/tls/config.js`. By default, it is expecting to find the private key in `config/tls/privkey.pem` and the certificate in `config/tls/cert.pem`.
 
 All the session information is stored in a __JWT__ on the client side (__sessionless passport__). In order to minimize the code, as the client is a browser, we will use __cookies__ for token storage (on the client) and exchange (between client and server). JWT and cookies configuration options are stored in `config/tokenNCookies`. You MUST __revisit that file__. Please note that the server's secret for 'signing' (HMACing) the token is one of the options, so be careful if you are syncing that file with an online repository.
 
