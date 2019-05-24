@@ -27,7 +27,7 @@ const createUserFromGitHub = function (profile) {
 };
 
 module.exports = {
-    users: users,
-    findByUsername: findByUsername,
-    createUserFromGitHub: createUserFromGitHub
+    users,
+    findByUsername,
+    createUserFromGitHub
 };
