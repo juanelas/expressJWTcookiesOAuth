@@ -15,7 +15,7 @@ passport.use('local', new LocalStrategy(
     },
     function (username, password, done) {
         const user = users.findByUsername(username);
-        if (user && user.username === username && bcrypt.compareSync(password, user.password)) {
+        if (user && bcrypt.compareSync(password, user.password)) {
             console.log(`username ${username}: good password!`);
             return done(null, user);
         }
