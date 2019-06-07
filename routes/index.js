@@ -18,12 +18,14 @@ router.get('/', passport.authenticate('jwtCookie', { session: false, failureRedi
 
 router.get('/login',
     (request, response) => {
-        response.sendFile('/views/login.html', {root: path.join(__dirname, '..')});
+        response.sendFile('/views/login.html', { root: path.join(__dirname, '..') });
     });
 
 router.post('/login', passport.authenticate('local', { session: false, failureRedirect: '/login' }),
     function (req, res) {
-        _setJWTCookie(req.user, res);
+        const token = _createJwt(req.user);
+        /** assign our jwt to the cookie */
+        res.cookie('jwt', token, require('../config/tokenNCookies').cookieOptions);
         /** Report success and allow the user to visit the intranet */
         res.send('<p>Login succeeded. Please proceed to the <a href="/">intranet</a></p>');
     }
@@ -35,13 +37,15 @@ router.get('/login/github',
 
 router.get('/auth/github/callback', passport.authenticate('github', { session: false, failureRedirect: '/login' }),
     function (req, res) {
-        _setJWTCookie(req.user, res);
+        const token = _createJwt(req.user);
+        /** assign our jwt to the cookie */
+        res.cookie('jwt', token, require('../config/tokenNCookies').cookieOptions);
         /** And finally redirect to the intranet */
         res.send('<p>Login succeeded. Please proceed to the <a href="/">intranet</a></p>');
     }
 );
 
-function _setJWTCookie(user, res) {
+function _createJwt(user) {
     /** This is what ends up in our JWT */
     const jwtClaims = {
         sub: user.username,
@@ -53,10 +57,7 @@ function _setJWTCookie(user, res) {
     };
 
     /** generate a signed json web token and return it in the response */
-    const token = jwt.sign(jwtClaims, require('../config/tokenNCookies').jwtSecret);
-
-    /** assign our jwt to the cookie */
-    res.cookie('jwt', token, require('../config/tokenNCookies').cookieOptions);
+    return jwt.sign(jwtClaims, require('../config/tokenNCookies').jwtSecret);
 }
 
 module.exports = router;

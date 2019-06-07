@@ -7,16 +7,20 @@ const logger = require('morgan');
 const passport = require('./config/passport');
 
 const app = express();
+
 app.use(logger('dev')); // Log requests (GET, POST, ...)
 app.use(express.urlencoded({ extended: true })); // needed to retrieve html form fields
 app.use(cookieParser()); // needed to retrieve html form fields
+app.use(express.json()); // needed to parse input json
 app.use(passport.initialize()); // initialise the authentication middleware
 
 /**
  * Load routes
  */
-const routes = require('./routes/index');
-app.use('/', routes);
+const intranet = require('./routes/index');
+app.use('/', intranet);
+const api = require('./routes/api');
+app.use('/api', api);
 
 /**
  * Create HTTPs server.
