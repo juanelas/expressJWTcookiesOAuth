@@ -2,7 +2,7 @@
 
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const JwtStrategy = require('passport-jwt').Strategy;
+const { Strategy: JwtStrategy, ExtractJwt } = require('passport-jwt');
 const GitHubStrategy = require('passport-github').Strategy;
 const bcrypt = require('bcrypt');
 
@@ -19,7 +19,7 @@ passport.use('local', new LocalStrategy(
             console.log(`username ${username}: good password!`);
             return done(null, user);
         }
-        return done({error: 'Incorrect username/password'});
+        return done({ error: 'Incorrect username/password' });
     }
 ));
 
@@ -30,6 +30,20 @@ passport.use('jwtCookie', new JwtStrategy(
                 return req.cookies.jwt;
             return null;
         },
+        secretOrKey: require('./tokenNCookies').jwtSecret
+    },
+    function (jwt_payload, done) {
+        const user = users.findByUsername(jwt_payload.sub);
+        console.log(JSON.stringify(user));
+        if (user)
+            return done(null, user);
+        return done(null, false, { message: 'Incorrect username/password' });
+    }
+));
+
+passport.use('jwtBearer', new JwtStrategy(
+    {
+        jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
         secretOrKey: require('./tokenNCookies').jwtSecret
     },
     function (jwt_payload, done) {

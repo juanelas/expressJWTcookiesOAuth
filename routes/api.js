@@ -3,6 +3,7 @@
 const express = require('express');
 const passport = require('../config/passport');
 const jwt = require('jsonwebtoken');
+const fortune = require('fortune-teller');
 
 const router = express.Router();
 
@@ -19,23 +20,22 @@ const cors = (req, res, next) => {
 
 router.use(cors);
 
-router.post('/login', 
+router.post('/login',
     function (req, res, next) {
         passport.authenticate('local', function (error, user) {
             if (error) {
                 res.status(401).json(error); //unauthorized
             } else {
                 const token = _createJwt(user);
-                res.json({jwt: token});
+                res.json({ jwt: token });
             }
         })(req, res, next);
     }
 );
 
-router.get('/user', passport.authenticate('jwtCookie', { session: false}),
+router.get('/fortune', passport.authenticate('jwtBearer', { session: false }),
     (req, res) => {
-        const userToken = jwt.decode(req.cookies.jwt);
-        res.json(userToken);
+        res.json({ msg: fortune.fortune() });
     }
 );
 
