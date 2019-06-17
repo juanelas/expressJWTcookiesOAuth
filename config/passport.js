@@ -48,7 +48,7 @@ passport.use('jwtBearer', new JwtStrategy(
     },
     function (jwt_payload, done) {
         const user = users.findByUsername(jwt_payload.sub);
-        console.log(JSON.stringify(user));
+        //console.log(JSON.stringify(user));
         if (user)
             return done(null, user);
         return done(null, false, { message: 'Incorrect username/password' });
