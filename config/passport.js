@@ -37,7 +37,7 @@ passport.use('jwtCookie', new JwtStrategy(
         console.log(JSON.stringify(user));
         if (user)
             return done(null, user);
-        return done(null, false, { message: 'Incorrect username/password' });
+        return done(null, false);
     }
 ));
 
@@ -51,7 +51,7 @@ passport.use('jwtBearer', new JwtStrategy(
         //console.log(JSON.stringify(user));
         if (user)
             return done(null, user);
-        return done(null, false, { message: 'Incorrect username/password' });
+        return done(null, false);
     }
 ));
 
@@ -65,6 +65,16 @@ module.exports = {
 };
  */
 passport.use('github', new GitHubStrategy(require('./IdP/github'),
+    function (accessToken, refreshToken, profile, cb) {
+        let user = users.findByUsername(profile.username);
+        if (!user) {
+            user = users.createUserFromGitHub(profile);
+        }
+        return cb(null, user);
+    }
+));
+
+passport.use('githubAPI', new GitHubStrategy(require('./IdP/githubAPI'),
     function (accessToken, refreshToken, profile, cb) {
         let user = users.findByUsername(profile.username);
         if (!user) {

@@ -33,6 +33,17 @@ router.post('/login',
     }
 );
 
+router.get('/login/github',
+    passport.authenticate('githubAPI', { session: false })
+);
+
+router.get('/auth/github/callback', passport.authenticate('githubAPI', { session: false }),
+    function (req, res) {
+        const token = _createJwt(req.user);
+        res.json({ jwt: token });
+    }
+);
+
 router.get('/fortune', passport.authenticate('jwtBearer', { session: false }),
     (req, res) => {
         res.json({ msg: fortune.fortune() });
