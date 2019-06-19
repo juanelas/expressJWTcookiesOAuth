@@ -40,7 +40,10 @@ router.get('/login/github',
 router.get('/auth/github/callback', passport.authenticate('githubAPI', { session: false }),
     function (req, res) {
         const token = _createJwt(req.user);
-        res.json({ jwt: token });
+        res.send(`<script>
+            window.opener.postMessage({ "tokenJwt": "${token}" }, "http://localhost:3000/auth/github/callback");
+            window.close();
+        </script>`);
     }
 );
 
