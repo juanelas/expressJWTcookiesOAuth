@@ -74,7 +74,7 @@ passport.use('github', new GitHubStrategy(require('./IdP/github'),
     }
 ));
 
-passport.use('githubAPI', new GitHubStrategy(require('./IdP/githubAPI'),
+passport.use('githubSPA', new GitHubStrategy(require('./IdP/githubSPA'),
     function (accessToken, refreshToken, profile, cb) {
         let user = users.findByUsername(profile.username);
         if (!user) {

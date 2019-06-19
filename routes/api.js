@@ -11,7 +11,7 @@ const router = express.Router();
  * CORS
  */
 const cors = (req, res, next) => {
-    res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+    res.header('Access-Control-Allow-Origin', require('../config/origins').spa);
     res.header('Access-Control-Allow-Headers', 'Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method');
     res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
     res.header('Allow', 'GET, POST, OPTIONS, PUT, DELETE');
@@ -20,7 +20,7 @@ const cors = (req, res, next) => {
 
 router.use(cors);
 
-router.post('/login',
+router.post('/auth/local/login',
     function (req, res, next) {
         passport.authenticate('local', function (error, user) {
             if (error) {
@@ -33,15 +33,15 @@ router.post('/login',
     }
 );
 
-router.get('/login/github',
-    passport.authenticate('githubAPI', { session: false })
+router.get('/auth/github/login/spa',
+    passport.authenticate('githubSPA', { session: false })
 );
 
-router.get('/auth/github/callback', passport.authenticate('githubAPI', { session: false }),
+router.get('/auth/github/callback/spa', passport.authenticate('githubSPA', { session: false }),
     function (req, res) {
         const token = _createJwt(req.user);
         res.send(`<script>
-            window.opener.postMessage({ "tokenJwt": "${token}" }, "http://localhost:3000/auth/github/callback");
+            window.opener.postMessage({ "tokenJwt": "${token}" }, "${require('../config/IdP/githubSPA').callbackSPA}");
             window.close();
         </script>`);
     }
