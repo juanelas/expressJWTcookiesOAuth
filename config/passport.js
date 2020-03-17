@@ -20,7 +20,7 @@ passport.use('local', new LocalStrategy(
             console.log(`username ${username}: good password!`);
             return done(null, user);
         }
-        return done({ error: 'Incorrect username/password' });
+        return done(null, false, { message: 'Incorrect username/password' });
     }
 ));
 
