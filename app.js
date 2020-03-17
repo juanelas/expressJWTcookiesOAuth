@@ -17,8 +17,8 @@ app.use(passport.initialize()); // initialise the authentication middleware
 /**
  * Load routes
  */
-const intranet = require('./routes/index');
-app.use('/', intranet);
+const webRoutes = require('./routes/index');
+app.use('/', webRoutes);
 const api = require('./routes/api');
 app.use('/api', api);
 
@@ -28,7 +28,7 @@ app.use('/api', api);
 const https = require('https');
 const fs = require('fs');
 
-const tlsConfig = require('./config/tls/config');
+const tlsConfig = require('./config/tls/');
 const credentials = {
     key: fs.readFileSync(tlsConfig.privateKey),
     cert: fs.readFileSync(tlsConfig.certificate)

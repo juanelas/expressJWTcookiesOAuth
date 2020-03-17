@@ -7,9 +7,9 @@
 </head>
 
 <body>
-    <h1>My custom intranet</h1>
+    <p><strong>Want to listen to the fortune-teller server?</strong></p>
     <p>Please login to proceed</p>
-    <form action="/login" method="post">
+    <form action="/auth/local/login" method="post">
         <div>
             <label>Username:</label>
             <input type="text" name="username" />
@@ -22,7 +22,7 @@
             <input type="submit" value="Log In" />
         </div>
     </form>
-    <a href="/login/github">Login with GitHub</a>
+    <a href="/auth/github/login">Login with GitHub</a>
 </body>
 
 </html>

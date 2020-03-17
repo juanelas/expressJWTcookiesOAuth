@@ -5,13 +5,15 @@ const passport = require('../config/passport');
 const jwt = require('jsonwebtoken');
 const fortune = require('fortune-teller');
 
+const config = require('../config');
+
 const router = express.Router();
 
 /**
  * CORS
  */
 const cors = (req, res, next) => {
-    res.header('Access-Control-Allow-Origin', require('../config/origins').spa);
+    res.header('Access-Control-Allow-Origin', config.api.allowedOrigins);
     res.header('Access-Control-Allow-Headers', 'Authorization, Content-Type');
     res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.header('Allow', 'GET, POST, OPTIONS');
@@ -41,7 +43,7 @@ router.get('/auth/github/callback/spa', passport.authenticate('githubSPA', { ses
     function (req, res) {
         const token = _createJwt(req.user);
         res.send(`<script>
-            window.opener.postMessage({ "tokenJwt": "${token}" }, "${require('../config/IdP/githubSPA').callbackSPA}");
+            window.opener.postMessage({ "tokenJwt": "${token}" }, "${require('../config/IdP/githubSPA').spaCallback}");
             window.close();
         </script>`);
     }
@@ -57,15 +59,15 @@ function _createJwt(user) {
     /** This is what ends up in our JWT */
     const jwtClaims = {
         sub: user.username,
-        iss: require('../config/tokenNCookies').jwtIss,
-        aud: require('../config/tokenNCookies').jwtAud,
+        iss: config.baseUrl,
+        aud: config.baseUrl,
         exp: Math.floor(Date.now() / 1000) + 604800, // 1 weak (7×24×60×60=604800s) from now
         name: user.name,
         email: user.email
     };
 
     /** generate a signed json web token and return it in the response */
-    return jwt.sign(jwtClaims, require('../config/tokenNCookies').jwtSecret);
+    return jwt.sign(jwtClaims, config.jwt.secret);
 }
 
 module.exports = router;

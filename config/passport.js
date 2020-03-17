@@ -6,6 +6,7 @@ const { Strategy: JwtStrategy, ExtractJwt } = require('passport-jwt');
 const GitHubStrategy = require('passport-github').Strategy;
 const bcrypt = require('bcrypt');
 
+const config = require('../config');
 const users = require('./users');
 
 passport.use('local', new LocalStrategy(
@@ -23,6 +24,10 @@ passport.use('local', new LocalStrategy(
     }
 ));
 
+/**
+ * JWT strategies differ in how the token is got from the request: 
+ * either cookies or the HTTP bearer authorization header
+ */
 passport.use('jwtCookie', new JwtStrategy(
     {
         jwtFromRequest: (req) => {
@@ -30,29 +35,16 @@ passport.use('jwtCookie', new JwtStrategy(
                 return req.cookies.jwt;
             return null;
         },
-        secretOrKey: require('./tokenNCookies').jwtSecret
+        secretOrKey: config.jwt.secret
     },
-    function (jwt_payload, done) {
-        const user = users.findByUsername(jwt_payload.sub);
-        console.log(JSON.stringify(user));
-        if (user)
-            return done(null, user);
-        return done(null, false);
-    }
+    _jwtVerifyCallback
 ));
-
 passport.use('jwtBearer', new JwtStrategy(
     {
         jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-        secretOrKey: require('./tokenNCookies').jwtSecret
+        secretOrKey: config.jwt.secret
     },
-    function (jwt_payload, done) {
-        const user = users.findByUsername(jwt_payload.sub);
-        //console.log(JSON.stringify(user));
-        if (user)
-            return done(null, user);
-        return done(null, false);
-    }
+    _jwtVerifyCallback
 ));
 
 /**
@@ -64,24 +56,38 @@ module.exports = {
     callbackURL: 'https://<yourDomain>:<yourPort>/auth/github/callback'
 };
  */
-passport.use('github', new GitHubStrategy(require('./IdP/github'),
-    function (accessToken, refreshToken, profile, cb) {
-        let user = users.findByUsername(profile.username);
-        if (!user) {
-            user = users.createUserFromGitHub(profile);
-        }
-        return cb(null, user);
-    }
-));
+const githubConfig = require('./IdP/github');
+passport.use('github', new GitHubStrategy(
+    {
+        clientID: githubConfig.clientID,
+        clientSecret: githubConfig.clientSecret,
+        callbackURL: githubConfig.callbackURL
+    }, _githubVerifyCallback)
+);
 
-passport.use('githubSPA', new GitHubStrategy(require('./IdP/githubSPA'),
-    function (accessToken, refreshToken, profile, cb) {
-        let user = users.findByUsername(profile.username);
-        if (!user) {
-            user = users.createUserFromGitHub(profile);
-        }
-        return cb(null, user);
+const githubSpaConfig = require('./IdP/githubSPA');
+passport.use('githubSPA', new GitHubStrategy(
+    {
+        clientID: githubSpaConfig.clientID,
+        clientSecret: githubSpaConfig.clientSecret,
+        callbackURL: githubSpaConfig.callbackURL
+    }, _githubVerifyCallback)
+);
+
+function _jwtVerifyCallback(jwt_payload, done) {
+    const user = users.findByUsername(jwt_payload.sub);
+    //console.log(JSON.stringify(user));
+    if (user)
+        return done(null, user);
+    return done(null, false);
+}
+
+function _githubVerifyCallback(accessToken, refreshToken, profile, cb) {
+    let user = users.findByUsername(profile.username);
+    if (!user) {
+        user = users.createUserFromGitHub(profile);
     }
-));
+    return cb(null, user);
+}
 
 module.exports = passport;
