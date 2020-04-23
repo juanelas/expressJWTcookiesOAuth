@@ -8,10 +8,17 @@ const bcrypt = require('bcrypt');
 
 const users = require('./users');
 
+// Configure the local strategy for use by Passport.
+//
+// The local strategy require a `verify` function which receives the credentials
+// (`username` and `password`) submitted by the user.  The function must verify
+// that the password is correct and then invoke `done` with a user object, which
+// will be set at `req.user` in route handlers after authentication.
 passport.use('local', new LocalStrategy(
     {
         usernameField: 'username',
-        passwordField: 'password'
+        passwordField: 'password',
+        session: false   // we are storing a JWT in the cookie with all the required session data. The server is session-less
     },
     function (username, password, done) {
         const user = users.findByUsername(username);
