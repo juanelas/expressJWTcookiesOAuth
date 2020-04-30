@@ -1,6 +1,6 @@
-const path = require('path');
+const path = require('path')
 
 module.exports = {
-    certificate: path.join(__dirname, 'cert.pem'),
-    privateKey: path.join(__dirname, 'privkey.pem')
-};
+  certificate: path.join(__dirname, 'cert.pem'),
+  privateKey: path.join(__dirname, 'privkey.pem')
+}
